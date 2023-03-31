@@ -1,0 +1,78 @@
+/* Style for the chat container */
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f6f6f6;
+  border-radius: 10px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Style for the chat messages */
+.chat-messages {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 100%;
+  max-height: 500px;
+  overflow-y: scroll;
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Style for the chat message */
+.chat-message {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+/* Style for the chat message sender */
+.chat-message-sender {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+/* Style for the chat message text */
+.chat-message-text {
+  font-size: 16px;
+}
+
+/* Style for the chat input */
+.chat-input {
+  width: 100%;
+  padding: 10px;
+  background-color: white;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Style for the chat send button */
+.chat-send-btn {
+  width: 100%;
+  padding: 10px;
+  background-color: #0084ff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Style for the chat send button hover effect */
+.chat-send-btn:hover {
+  background-color: #0066cc;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5);
+}
