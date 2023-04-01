@@ -8,9 +8,10 @@ import './Chat.css'
 import ChatMessage from './ChatMessage';
 /* eslint-disable no-undef */
 
-const API_KEY = ;
+const API_KEY = "";
 
 const Chat = () => {
+    const [tmpMessage, setTmpMessage] = useState('')
     const [tabId, setTabId] = useState(0)
     const [messages, setMessages] = useState([]);
     const [inputMsg, setInputMsg] = useState("");
@@ -31,12 +32,21 @@ const Chat = () => {
     }, [triggerSend])
 
     useEffect(() => {
+        async function fetchTab() {
+            await chrome.tabs.query({ active: true, currentWindow: true }, async function (tabs) {
+                let activeTabId = tabs[0].id;
+                setTabId(activeTabId)
+            })
+        }
+        fetchTab()
+        // eslint-disable-next-line
+    }, [])
+
+    useEffect(() => {
         async function fetchData() {
             getQuestionData()
             getQuestionTitle()
-            console.log("FISH - ", tabId)
             await chrome.storage.local.get(`${tabId}messages`, result => {
-                console.log(`${tabId}messages`, result)
                 if (result[`${tabId}messages`]) {
                     setMessages(JSON.parse(result[`${tabId}messages`]))
                 }
@@ -78,7 +88,6 @@ const Chat = () => {
             messages: [systemMessage, ...apiMessages]
         }
 
-        console.log(apiRequestBody)
         await fetch("https://api.openai.com/v1/chat/completions", {
             method: "POST",
             headers: {
@@ -94,7 +103,6 @@ const Chat = () => {
                 message: data.choices[0].message.content
             }]
             setMessages(msgs)
-            console.log("CISH ", tabId)
             await chrome.storage.local.set({
                 [`${tabId}messages`]: JSON.stringify(msgs)
             })
@@ -106,10 +114,21 @@ const Chat = () => {
             return;
         if (e !== 0) e.preventDefault();
         setLoadingMsg(true)
-        const newMessage = {
-            message: inputMsg,
-            sender: "user",
-            direction: "outgoing"
+        let newMessage = {}
+        if (tmpMessage !== '') {
+            newMessage = {
+                message: inputMsg,
+                displayMsg: tmpMessage,
+                sender: "user",
+                direction: "outgoing"
+            }
+            setTmpMessage('')
+        } else {
+            newMessage = {
+                message: inputMsg,
+                sender: "user",
+                direction: "outgoing"
+            }
         }
 
         const newMessages = [...messages, newMessage];
@@ -145,7 +164,6 @@ const Chat = () => {
                 (result) => {
                     let qt = result[0].result.slice(result[0].result.indexOf('.') + 1)
                     setQuestionTitle(qt)
-
                 }
             );
         });
@@ -183,7 +201,7 @@ const Chat = () => {
                 {
                     target: { tabId: activeTabId },
                     func: () => {
-                        const element = document.getElementsByClassName('view-lines monaco-mouse-cursor-text')[0];
+                        const element = document.getElementsByClassName('lines-content')[0];
                         if (element) {
                             return element.innerHTML;
                         }
@@ -192,23 +210,33 @@ const Chat = () => {
                 },
                 (result) => {
                     //========= WIP ========= //
-                    // const code = extractCodeFromHtml(result[0].result)
-                    // setCode(code)
-                    // setInputMsg(code + ". What's the error?")
-                    // sessionStorage.set('questionData', questionText)
-                    // setInputMsg("Give me a hint for the " + result[0].result.slice(result[0].result.indexOf('.') + 1) + " problem on Leetcode");
-                    // setTriggerSend(!triggerSend)
+                    const code = extractCodeFromHtml(result[0].result)
+                    setCode(code)
+                    setInputMsg(code + "\nWhat's the error here?")
                 }
             );
         });
     }
 
-    const prefilledPrompt = (promptMessage) => {
+    const prefilledPrompt = (promptNum) => {
         if (questionTitle === '') {
             getQuestionData()
             getQuestionTitle()
         }
-        setInputMsg(promptMessage)
+        switch (promptNum) {
+            case 1:
+                setInputMsg("Give me a hint")
+                setTmpMessage("This is the first prefill")
+                break;
+            case 2:
+                setInputMsg("Give me a solution")
+                setTmpMessage("This is the second prefill")
+                break;
+            case 3:
+                setInputMsg("Give me an ideal solution")
+                setTmpMessage("This is the third prefill")
+                break;
+        }
         setTriggerSend(!triggerSend)
     }
 
@@ -222,12 +250,12 @@ const Chat = () => {
             <div className="chat-messages">
                 <ChatMessage messages={messages} />
             </div>
-            {loadingMsg && <div>CHATGPT IS THINKING ...</div>}
+            {loadingMsg && <div>mermaid IS THINKING ...</div>}
             <div className="chat-menu">
-                <button className="chat-menu-btn" onClick={() => prefilledPrompt("Give me a hint on how to start solving this question")}>📖 How do I start</button>
-                <button className="chat-menu-btn" onClick={() => prefilledPrompt("What's the ideal optimized solution for this question?")}>📝 Solution</button>
-                <button className="chat-menu-btn" onClick={() => prefilledPrompt("What's the ideal time complexity expected?")}>📝 Ideal TC</button>
-                <button className="chat-menu-btn" onClick={() => prefilledPrompt("Ask me something an interviewer would ask based on this question")}>📝 Interview Me</button>
+                <button className="chat-menu-btn" onClick={() => prefilledPrompt(1)}>📖 How do I start</button>
+                <button className="chat-menu-btn" onClick={() => prefilledPrompt(2)}>📝 Solution</button>
+                <button className="chat-menu-btn" onClick={() => prefilledPrompt(3)}>📝 Ideal TC</button>
+                <button className="chat-menu-btn" onClick={debugSolution}>📝 Interview Me</button>
             </div>
             <div className='chat-input-box'>
                 <form>

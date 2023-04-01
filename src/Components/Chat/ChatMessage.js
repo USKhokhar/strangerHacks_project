@@ -40,7 +40,7 @@ const ChatMessage = ({ messages }) => {
                         : <div className="chat-message chat-message-user" >
                             <span className="chat-message-sender"><FaUserCircle /></span>
                             <span className="chat-message-text">
-                                <ReactMarkdown>{messageObj.message}
+                                <ReactMarkdown>{messageObj.displayMsg ? messageObj.displayMsg : messageObj.message}
                                 </ReactMarkdown>
                             </span>
                         </div>}
