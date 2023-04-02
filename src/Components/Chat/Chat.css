@@ -38,7 +38,7 @@
 }
 
 .chat-message-user {
-    background-color: #FFBF00;
+    background-color: #00edf3;
     color: black;
     border-radius: 18px;
     margin: 10px;
@@ -86,7 +86,7 @@
     resize: none;
     width: 100%;
     border: none;
-    border-top: 1px solid #696b83;
+    border-top: 2px solid #696b83;
     font-size: 16px;
 }
 
@@ -102,7 +102,7 @@
 .chat-prompt-toggle-btn {
     margin: 5px 85% 10px 10px;
     background: none;
-    border: 2px solid #ffbf00;
+    border: 1px solid #00edf3;
     border-radius: 18px;
     box-shadow: none;
     color: #fff;
@@ -115,7 +115,7 @@
 .chat-prompt-toggle-close-btn {
     background: none;
     border: none;
-    color: #ffbf00;
+    color: #00edf3;
     font-size: 20px;
     position: absolute;
     top: 0px;
@@ -155,9 +155,9 @@
 }
 
 .chat-prefilled-btn {
-    border: 2px solid #ffbf00;
+    border: 1px solid #00edf3;
     border-radius: 18px;
-    margin: 3px 6px;
+    margin: 3px 4px;
     box-shadow: none;
     color: #fff;
     padding: 10px;
@@ -169,11 +169,11 @@
 
 .chat-prefilled-btn:hover {
     color: black;
-    background-color: #ffbf00;
+    background-color: #00edf3;
 }
 
 .color-primary {
-    color: #ffbf00;
+    color: #00edf3;
 }
 
 .chat-welcome-msg {

@@ -3,7 +3,11 @@ export const extractTextFromHtml = (htmlString) => {
     const tempElement = document.createElement('div');
     tempElement.innerHTML = htmlString;
 
-    // Use the .textContent property to extract the text from the HTML tags
+    // Ignore elements with id "MathJax_SVG_styles"
+    const elementsToIgnore = tempElement.querySelectorAll('#MathJax_SVG_styles'); // for Hackerrank
+    elementsToIgnore.forEach(element => element.remove());
+
+    // Use the .textContent property to extract the text from the remaining HTML tags
     const extractedText = tempElement.textContent;
 
     // Remove any whitespace from the extracted text

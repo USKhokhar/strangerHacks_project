@@ -16,3 +16,23 @@
     color: inherit;
     cursor: default;
 }
+
+.nav-settings {
+    border: none;
+    background: none;
+    font-size: 20px;
+    color: #ffffffbf;
+    cursor: pointer;
+}
+
+.nav-main-left {
+    display: flex;
+}
+
+.nav-main-left p {
+    margin: 0;
+    padding-top: 15px;
+    font-size: 9px;
+    padding-left: 5px;
+    color: #ffffff87;
+}
