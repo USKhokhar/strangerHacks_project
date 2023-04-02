@@ -1,5 +1,6 @@
 html,
 body {
-    width: 650px;
+    min-width: 700px;
+    margin: 0px;
     font-family: 'Noto Sans', sans-serif;
 }

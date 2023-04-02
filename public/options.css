@@ -1,0 +1,39 @@
+body {
+    background-color: #444654;
+    font-family: 'Noto Sans', sans-serif;
+    margin: 0;
+}
+
+.color-primary {
+    color: #FFBF00;
+}
+
+.options-main {
+    width: 50%;
+    margin: 0 auto;
+    padding: 30px;
+    color: white;
+    height: 100vh;
+}
+
+.options-main h1 {
+    text-align: center;
+}
+
+.options-heading {
+    color: #FFBF00;
+    margin-top: 40px;
+}
+
+.options-button {
+    background-color: #FFBF00;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 20px;
+}
+
+.options-paragraph {
+    margin-top: 20px;
+}

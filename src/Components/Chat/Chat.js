@@ -1,26 +1,30 @@
 import React, { useEffect, useRef } from 'react'
 import { useState } from 'react';
-import { BsSend } from "react-icons/bs";
+import { BsArrowBarUp, BsSend } from "react-icons/bs";
+import { MdCancel } from "react-icons/md";
+import { PulseLoader } from 'react-spinners';
 import { extractCodeFromHtml } from '../../utils/extractCodeFromHtml';
 import { extractTextFromHtml } from '../../utils/extractTextFromHtml';
 import useAutosizeTextArea from '../../utils/useAutoTextArea';
 import './Chat.css'
 import ChatMessage from './ChatMessage';
+import landingImg from '../../Assets/landing.svg'
+import { prompts } from '../../Data/prompts';
 /* eslint-disable no-undef */
 
 const API_KEY = "";
 
-const Chat = () => {
+const Chat = ({ platform, questionTitleClass, questionBodyClass }) => {
     const [tmpMessage, setTmpMessage] = useState('')
-    const [tabId, setTabId] = useState(0)
     const [messages, setMessages] = useState([]);
     const [inputMsg, setInputMsg] = useState("");
-    const [loadingMsg, setLoadingMsg] = useState(false)
-    const [triggerSend, setTriggerSend] = useState(false)
 
     const [questionTitle, setQuestionTitle] = useState('')
     const [questionData, setQuestionData] = useState('')
-    const [code, setCode] = useState('')
+
+    const [loadingMsg, setLoadingMsg] = useState(false)
+    const [triggerSend, setTriggerSend] = useState(false)
+    const [displayPromts, setDisplayPrompts] = useState(true)
 
     const textAreaRef = useRef(null);
 
@@ -32,40 +36,33 @@ const Chat = () => {
     }, [triggerSend])
 
     useEffect(() => {
-        async function fetchTab() {
-            await chrome.tabs.query({ active: true, currentWindow: true }, async function (tabs) {
-                let activeTabId = tabs[0].id;
-                setTabId(activeTabId)
-            })
-        }
-        fetchTab()
+        if (!questionTitleClass || questionTitleClass === '' || !questionBodyClass || questionBodyClass === '') return
+        getQuestionData(questionBodyClass)
+        getQuestionTitle(questionTitleClass)
         // eslint-disable-next-line
-    }, [])
+    }, [questionTitleClass, questionBodyClass])
+
+
 
     useEffect(() => {
         async function fetchData() {
-            getQuestionData()
-            getQuestionTitle()
-            await chrome.storage.local.get(`${tabId}messages`, result => {
-                if (result[`${tabId}messages`]) {
-                    setMessages(JSON.parse(result[`${tabId}messages`]))
+            if (questionTitle === '' || !platform) {
+                return;
+            }
+            await chrome.storage.sync.get(`${platform}_${questionTitle.replace(/\s/g, '')}messages`, result => {
+                if (result[`${platform}_${questionTitle.replace(/\s/g, '')}messages`]) {
+                    setMessages(JSON.parse(result[`${platform}_${questionTitle.replace(/\s/g, '')}messages`]))
+                }
+            })
+            await chrome.storage.sync.get(`${platform}_${questionTitle.replace(/\s/g, '')}displayPrompts`, result => {
+                if (result[`${platform}_${questionTitle.replace(/\s/g, '')}displayPrompts`] !== undefined) {
+                    setDisplayPrompts((result[`${platform}_${questionTitle.replace(/\s/g, '')}displayPrompts`]))
                 }
             })
         }
         fetchData()
         // eslint-disable-next-line
-    }, [tabId])
-
-    useEffect(() => {
-        async function fetchTabData() {
-            await chrome.tabs.query({ active: true, currentWindow: true }, async function (tabs) {
-                let activeTabId = tabs[0].id;
-                setTabId(activeTabId)
-            })
-        }
-        fetchTabData()
-        // eslint-disable-next-line
-    }, [])
+    }, [questionTitle, platform])
 
     async function processMessageChatgpt(chatMessages) {
         let apiMessages = chatMessages.map((messageObj) => {
@@ -80,7 +77,9 @@ const Chat = () => {
 
         const systemMessage = {
             role: "system",
-            content: "I'm a student using leetcode to prepare for software engineering interviews. Only answer questions that are relevant to the interview preparation. I'm currently trying the " + questionTitle + " question. Here is the full description of the question: " + questionData
+            content: `Your name is "LeetCoach". You are "LeetCoach". Identify yourself as "LeetCoach". I will call you that. I'm a student using leetcode to prepare for software engineering interviews. I'm currently trying the
+                ${questionTitle} question. Here is the full description of the question: 
+                ${questionData}. You will help me with my doubts related to this question. You must not answer anything that is not relevant to the question or to my interview preparation. This is very important.`
         }
 
         const apiRequestBody = {
@@ -103,8 +102,8 @@ const Chat = () => {
                 message: data.choices[0].message.content
             }]
             setMessages(msgs)
-            await chrome.storage.local.set({
-                [`${tabId}messages`]: JSON.stringify(msgs)
+            await chrome.storage.sync.set({
+                [`${platform}_${questionTitle.replace(/\s/g, '')}messages`]: JSON.stringify(msgs)
             })
         })
     }
@@ -147,19 +146,21 @@ const Chat = () => {
     }
 
     // mr-2 text-lg font-medium text-label-1 dark:text-dark-label-1
-    const getQuestionTitle = async (e) => {
+    const getQuestionTitle = async (questionTitleClassName) => {
+        const getQT = (arg1) => {
+            const element = document.getElementsByClassName(arg1)[0];
+            if (element) {
+                return element.innerText;
+            }
+            return null;
+        }
         await chrome.tabs.query({ active: true, currentWindow: true }, async function (tabs) {
             let activeTabId = tabs[0].id;
             await chrome.scripting.executeScript(
                 {
                     target: { tabId: activeTabId },
-                    func: () => {
-                        const element = document.getElementsByClassName('mr-2 text-lg font-medium text-label-1 dark:text-dark-label-1')[0];
-                        if (element) {
-                            return element.innerText;
-                        }
-                        return null;
-                    }
+                    func: getQT,
+                    args: [questionTitleClassName]
                 },
                 (result) => {
                     let qt = result[0].result.slice(result[0].result.indexOf('.') + 1)
@@ -169,19 +170,21 @@ const Chat = () => {
         });
     };
 
-    const getQuestionData = async (e) => {
+    const getQuestionData = async (questionBodyClassName) => {
+        const getQB = (arg1) => {
+            const element = document.getElementsByClassName(arg1)[0];
+            if (element) {
+                return element.innerHTML;
+            }
+            return null;
+        }
         await chrome.tabs.query({ active: true, currentWindow: true }, async function (tabs) {
             let activeTabId = tabs[0].id;
             await chrome.scripting.executeScript(
                 {
                     target: { tabId: activeTabId },
-                    func: () => {
-                        const element = document.getElementsByClassName('_1l1MA')[0];
-                        if (element) {
-                            return element.innerHTML;
-                        }
-                        return null;
-                    }
+                    func: getQB,
+                    args: [questionBodyClassName]
                 },
                 (result) => {
                     const rawString = extractTextFromHtml(result[0].result)
@@ -211,11 +214,17 @@ const Chat = () => {
                 (result) => {
                     //========= WIP ========= //
                     const code = extractCodeFromHtml(result[0].result)
-                    setCode(code)
                     setInputMsg(code + "\nWhat's the error here?")
                 }
             );
         });
+    }
+
+    const toggleDisplayPrompts = async (val) => {
+        setDisplayPrompts(val)
+        await chrome.storage.sync.set({
+            [`${platform}_${questionTitle.replace(/\s/g, '')}displayPrompts`]: val
+        })
     }
 
     const prefilledPrompt = (promptNum) => {
@@ -223,20 +232,46 @@ const Chat = () => {
             getQuestionData()
             getQuestionTitle()
         }
-        switch (promptNum) {
-            case 1:
-                setInputMsg("Give me a hint")
-                setTmpMessage("This is the first prefill")
-                break;
-            case 2:
-                setInputMsg("Give me a solution")
-                setTmpMessage("This is the second prefill")
-                break;
-            case 3:
-                setInputMsg("Give me an ideal solution")
-                setTmpMessage("This is the third prefill")
-                break;
-        }
+        setInputMsg(prompts[promptNum - 1].actualMessage)
+        setTmpMessage(prompts[promptNum - 1].displayMessage)
+        // switch (promptNum) {
+        //     case 0:
+        //         setInputMsg("Explain the question like I am new to this. Also provide examples if you can")
+        //         setTmpMessage("Explain the question")
+        //         break;
+        //     case 1:
+        //         setInputMsg("Give me a hint on how to start solving this question. Just give me a hint on the most obvious solution (usually the brute-force one), don't reveal the best solution.")
+        //         setTmpMessage("Give me a hint on how to start solving this question")
+        //         break;
+        //     case 2:
+        //         setInputMsg("I got the brute-force solution. Give me a hint on how I can optimize to get a better solution. I just need a hint, don't reveal the full solution")
+        //         setTmpMessage("How can I optimize my solution?")
+        //         break;
+        //     case 3:
+        //         setInputMsg("List the different approaches for solving this question")
+        //         setTmpMessage("List all approaches")
+        //         break;
+        //     case 4:
+        //         setInputMsg("What is the time complexity of the most optimal solution. Just tell the time complexity, don't explain the approach or solution.")
+        //         setTmpMessage("What is the expected optimal time complexity?")
+        //         break;
+        //     case 5:
+        //         setInputMsg("Ask me a question that would be asked in a real interview based on this question")
+        //         setTmpMessage("Ask me a potential interview question")
+        //         break;
+        //     case 6:
+        //         setInputMsg("List some questions that are similar to the concepts used in this question")
+        //         setTmpMessage("List similar questions")
+        //         break;
+        //     case 7:
+        //         setInputMsg("Tell me why my code for this question is wrong")
+        //         setTmpMessage("Tell me what's wrong with my code")
+        //         break;
+        //     default:
+        //         setInputMsg('')
+        //         setTmpMessage('')
+        //         break
+        // }
         setTriggerSend(!triggerSend)
     }
 
@@ -246,33 +281,56 @@ const Chat = () => {
 
     return (
         <div className="chat-container">
-            <h2>Mermaid - Your leetcode buddy</h2>
-            <div className="chat-messages">
-                <ChatMessage messages={messages} />
-            </div>
-            {loadingMsg && <div>mermaid IS THINKING ...</div>}
-            <div className="chat-menu">
-                <button className="chat-menu-btn" onClick={() => prefilledPrompt(1)}>📖 How do I start</button>
-                <button className="chat-menu-btn" onClick={() => prefilledPrompt(2)}>📝 Solution</button>
-                <button className="chat-menu-btn" onClick={() => prefilledPrompt(3)}>📝 Ideal TC</button>
-                <button className="chat-menu-btn" onClick={debugSolution}>📝 Interview Me</button>
-            </div>
-            <div className='chat-input-box'>
-                <form>
-                    <div className='chat-input-div'>
-                        <textarea
-                            className="chat-input"
-                            value={inputMsg}
-                            onChange={e => setInputMsg(e.target.value)}
-                            onKeyDown={enterPressed}
-                            rows={1}
-                            ref={textAreaRef}
-                            required
-                        ></textarea>
-                        <button className="chat-send-btn" onClick={handleSend}><BsSend /></button>
+            {questionTitle === '' ?
+                <div>
+                    <h2 className='error-msg'>Oops - Error fetching question, please close and open the extension once the page completes loading</h2>
+                </div> :
+                <>
+                    {!messages || (messages && messages.length === 0) ?
+                        <div className="chat-welcome-msg">
+                            <div>
+                                <img src={landingImg} alt="LeetCoach" />
+                            </div>
+                            <div>
+                                <h3>I'm Leet<span className="color-primary">Coach</span></h3>
+                                <p>I see that you're trying the {questionTitle} problem.</p>
+                                <p>I'm here to help you with any doubts you have on that :)</p>
+                                <p>Ask me anything!</p>
+                            </div>
+                        </div> :
+                        <div className="chat-messages">
+                            <ChatMessage messages={messages} />
+                        </div>
+                    }
+                    {loadingMsg && <div className="chat-loading-msg"><PulseLoader color="#ffbf00" /></div>}
+                    <div className='chat-bottom'>
+                        {displayPromts ?
+                            <div className="chat-menu">
+                                <button className="chat-prompt-toggle-close-btn" onClick={() => toggleDisplayPrompts(false)}><MdCancel /></button>
+                                {prompts.map(prompt => (
+                                    <button className="chat-prefilled-btn" onClick={() => prefilledPrompt(prompt.id)}>{prompt.displayMessage}</button>
+                                ))}
+                            </div> :
+                            <button className="chat-prompt-toggle-btn" onClick={() => toggleDisplayPrompts(true)}><BsArrowBarUp /> Prompt Suggestions</button>
+                        }
+                        <div className='chat-input-box'>
+                            <form>
+                                <div className='chat-input-div'>
+                                    <textarea
+                                        className="chat-input"
+                                        value={inputMsg}
+                                        onChange={e => setInputMsg(e.target.value)}
+                                        onKeyDown={enterPressed}
+                                        rows={1}
+                                        ref={textAreaRef}
+                                        required
+                                    ></textarea>
+                                    <button className="chat-send-btn" onClick={handleSend}><BsSend /></button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                </form>
-            </div>
+                </>}
         </div>
     )
 }

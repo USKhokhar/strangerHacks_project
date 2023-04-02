@@ -1,3 +1,9 @@
+.not-active {
+  padding: 20px;
+  background: #444654;
+  color: white;
+}
+
 /* width */
 ::-webkit-scrollbar {
   width: 10px;
