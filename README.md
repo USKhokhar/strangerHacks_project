@@ -1,70 +1,45 @@
-# Getting Started with Create React App
+# Codie
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Codie is an AI powered chatbot that is intended to help you with your Software Interview Preparation and doubts related to coding problems. Codie runs on the GPT-3 model created by OpenAI, and is programmed specifically for this use case.  
 
-## Available Scripts
+# Why use Codie?
+- Codie comes as a chrome extension, meaning there's no need to navigate between tabs, making it super convinient and accessible
+- Codie can read and understand the question you are solving. You don't have to copy and paste anything
+- Codie comes with well engineered pre-defined prompts that you can use with a click of a button
+- Codie supports most of the commonly used platforms for Interview prep coding challenges.
 
-In the project directory, you can run:
+# Features
+Here are some cool things Codie can do:  
+- See and understand the problem you are trying, and help you with any doubts you have on that.  
+- Explain the question better with examples.  
+- Give you a hint on how to get started
+- Help you think of a more optimized solution
+- List all solution approaches for the question
+- Ask a potential interview questions based on the problem
+- Conduct a mock interview
 
-### `yarn start`
+That's not all, Codie is a smart AI chatbot, meaning you can chat with it and ask it anything regarding the problem or your interview prep. It can do a lot of stuff ranging from clearing your small doubts, to writing the most optimized programs for the given problem. 
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+# How to Install the extension
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+1. Download this repo or just the build/ folder
 
-### `yarn test`
+2. Go to chrome://extensions  
+ 
+3. Enable "Developer mode"
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+4. In the Developer options, click on "Load unpacked"  
 
-### `yarn build`
+5. Select the build/ folder from the downloaded repo
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+# Supported Platforms
+Currently, Codie supports questions from the following platforms
+- Leetcode
+- AlgoExpert
+- Hackerrank
+- Geeksforgeeks
+- Interviewbit
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Additionally, Codie doesn't not work during live tests or contests, and we don't condone or encourage cheating.
+ 
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
