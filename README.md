@@ -22,15 +22,27 @@ That's not all, Codie is a smart AI chatbot, meaning you can chat with it and as
 
 # How to Install the extension
 
-1. Download this repo or just the build/ folder
+1. Clone/Download this repo
 
-2. Go to chrome://extensions  
+2. At the root folder, create a .env file with the following content
+```
+REACT_APP_GPT_API = <OpenAI_API_KEY>
+```
+Since keys can't be uploaded on public repos, you will have to create your own API key from [OpenAI](https://platform.openai.com/account/api-keys).
+
+3. Run the following commands
+```
+npm install
+npm run build
+```
+
+4. Go to chrome://extensions  
  
-3. Enable "Developer mode"
+5. Enable "Developer mode"
 
-4. In the Developer options, click on "Load unpacked"  
+6. In the Developer options, click on "Load unpacked"  
 
-5. Select the build/ folder from the downloaded repo
+7. Select the build/ folder from the repo
 
 # Supported Platforms
 Currently, Codie supports questions from the following platforms
