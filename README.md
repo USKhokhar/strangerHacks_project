@@ -22,7 +22,11 @@ That's not all, Codie is a smart AI chatbot, meaning you can chat with it and as
 
 # How to Install the extension
 
-1. Clone/Download this repo
+0. Download the build/ folder from [here](https://drive.google.com/drive/folders/1zhVlglMvIuJTCr-ijlp9dKvOeFD1SdLj?usp=sharing) and skip to step 4   
+
+OR    
+
+1. Clone/Download this repo  
 
 2. At the root folder, create a .env file with the following content
 ```
